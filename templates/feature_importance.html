@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Feature Importance</title>
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Bootstrap Icons -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css" rel="stylesheet">
+    <style>
+        body {
+            display: flex;
+            min-height: 100vh;
+        }
+        .sidebar {
+            width: 250px;
+            background-color: #343a40;
+            color: #fff;
+            flex-shrink: 0;
+        }
+        .sidebar a {
+            color: #fff;
+            text-decoration: none;
+        }
+        .sidebar a:hover {
+            background-color: #495057;
+            color: #fff;
+        }
+        .content {
+            flex-grow: 1;
+            padding: 20px;
+        }
+        #chart {
+            height: 400px;
+        }
+    </style>
+</head>
+<body>
+    <!-- Sidebar -->
+    <div class="sidebar d-flex flex-column p-3">
+        <h4 class="text-center mb-4">Dashboard</h4>
+        <ul class="nav nav-pills flex-column mb-auto">
+            <li class="nav-item">
+                <a href="{{ url_for('dashboard') }}" class="nav-link">
+                    <i class="bi bi-speedometer2"></i> Home
+                </a>
+            </li>
+            <li>
+                <a href="{{ url_for('patients') }}" class="nav-link">
+                    <i class="bi bi-people"></i> Patients
+                </a>
+            </li>
+            <li>
+                <a href="{{ url_for('prediction_history') }}" class="nav-link">
+                    <i class="bi bi-clock-history"></i> Prediction History
+                </a>
+            </li>
+            <li>
+                <a href="{{ url_for('reports') }}" class="nav-link">
+                    <i class="bi bi-file-earmark-text"></i> Reports
+                </a>
+            </li>
+            <li>
+                <a href="{{ url_for('feature_importance') }}" class="nav-link active">
+                    <i class="bi bi-graph-up"></i> Feature Importance
+                </a>
+            </li>
+            <li>
+                <a href="{{ url_for('logout') }}" class="nav-link">
+                    <i class="bi bi-box-arrow-right"></i> Logout
+                </a>
+            </li>
+        </ul>
+    </div>
+
+    <!-- Main Content -->
+    <div class="content">
+        <h2 class="mb-4">Feature Importance</h2>
+
+        <!-- Table -->
+        <div class="table-responsive mb-4">
+            <table class="table table-striped table-hover align-middle">
+                <thead class="table-dark">
+                    <tr>
+                        <th>Feature</th>
+                        <th>Importance Score</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for feature, score in feature_importances %}
+                    <tr>
+                        <td>{{ feature }}</td>
+                        <td>{{ "%.4f"|format(score) }}</td>
+                    </tr>
+                    {% else %}
+                    <tr>
+                        <td colspan="2" class="text-center">No feature importance data available.</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+
+        <!-- Chart placeholder -->
+        <div id="chart"></div>
+    </div>
+
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    <!-- Optional: Chart.js for visualization -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script>
+        {% if feature_importances %}
+        const ctx = document.getElementById('chart').getContext('2d');
+        const chart = new Chart(ctx, {
+            type: 'bar',
+            data: {
+                labels: {{ feature_importances | map(attribute=0) | list | safe }},
+                datasets: [{
+                    label: 'Importance Score',
+                    data: {{ feature_importances | map(attribute=1) | list | safe }},
+                    backgroundColor: 'rgba(54, 162, 235, 0.7)',
+                    borderColor: 'rgba(54, 162, 235, 1)',
+                    borderWidth: 1
+                }]
+            },
+            options: {
+                responsive: true,
+                scales: {
+                    y: { beginAtZero: true }
+                }
+            }
+        });
+        {% endif %}
+    </script>
+</body>
+</html>
