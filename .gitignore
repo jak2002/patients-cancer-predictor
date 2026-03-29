@@ -1,0 +1,45 @@
+# Virtual environments
+.venv/
+venv/
+env/
+ENV/
+
+# Python cache and bytecode
+__pycache__/
+*.py[cod]
+*$py.class
+
+# IDE/editor
+.vscode/
+.idea/
+*.sublime-project
+*.sublime-workspace
+
+# Environment variables and secrets
+.env
+.env.*.local
+
+# SQLite and other local DBs
+patients.db
+*.sqlite3
+*.db
+
+# Logs and runtime files
+*.log
+instance/
+tmp/
+*.pid
+
+# Static generated reports and large outputs
+/static/reports/
+/reports/
+/output/
+
+# Build and distribution
+build/
+dist/
+*.egg-info/
+
+# OS files
+.DS_Store
+Thumbs.db
